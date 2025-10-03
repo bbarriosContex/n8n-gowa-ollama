@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # N8N - Workflow Automation
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n-playhunt
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=${N8N_DOMAIN:-n8n.playhunt.es}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://${N8N_DOMAIN:-n8n.playhunt.es}/
+      - GENERIC_TIMEZONE=${TIMEZONE:-Europe/Madrid}
+    volumes:
+      - ./data/n8n:/home/node/.n8n
+    networks:
+      - playhunt-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # GO-WHATSAPP-WEB-MULTIDEVICE - WhatsApp API (ARM64 Compatible)
+  wa-automate:
+    image: aldinokemal2104/go-whatsapp-web-multidevice:latest
+    container_name: wa-automate-playhunt
+    restart: unless-stopped
+    ports:
+      - "8002:3000"
+    environment:
+      - APP_PORT=3000
+      - APP_DEBUG=true
+      - APP_OS=PlayHunt-Server
+      - APP_BASIC_AUTH=admin:playhunt2024
+      - WHATSAPP_AUTO_MARK_READ=true
+      - WHATSAPP_ACCOUNT_VALIDATION=false
+    volumes:
+      - ./data/wa-automate:/app/storages
+    networks:
+      - playhunt-network
+    command:
+      - rest
+      - --port=3000
+      - --debug=true
+      - --os=PlayHunt-Server
+      - --basic-auth=admin:playhunt2024
+      - --auto-mark-read=true
+      - --account-validation=false
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # OLLAMA - Local LLM Server
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-playhunt
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    volumes:
+      - ./data/ollama:/root/.ollama
+    networks:
+      - playhunt-network
+    # Descomentar si tienes GPU NVIDIA
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  playhunt-network:
+    driver: bridge
+    name: playhunt-network
+
+volumes:
+  n8n-data:
+  wa-automate-data:
+  ollama-data:

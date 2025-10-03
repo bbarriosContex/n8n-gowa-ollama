@@ -1,0 +1,53 @@
+# .gitignore para Playhunt Apps
+
+# Variables de entorno
+.env
+
+# Datos persistentes
+data/
+
+# Backups
+backups/
+*.tar.gz
+
+# Logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Configuraciones de Apache copiadas
+apache-configs/*.conf
+!apache-configs/*.template
+
+# Archivos de sesión
+.session
+session/
+
+# Node modules (si se usan scripts adicionales)
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Docker
+.dockerignore
+
+# Sistema
+.bash_history
+.cache/

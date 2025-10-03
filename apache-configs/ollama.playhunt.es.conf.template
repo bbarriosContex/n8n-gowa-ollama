@@ -1,0 +1,53 @@
+# Configuración de Apache para Ollama
+# Subdominio: ollama.playhunt.es
+# Puerto: 11434
+
+<VirtualHost *:80>
+    ServerName ollama.playhunt.es
+    ServerAdmin admin@playhunt.es
+    
+    # Redirección a HTTPS
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
+    
+    ErrorLog ${APACHE_LOG_DIR}/ollama.playhunt.es-error.log
+    CustomLog ${APACHE_LOG_DIR}/ollama.playhunt.es-access.log combined
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName ollama.playhunt.es
+    ServerAdmin admin@playhunt.es
+    
+    # Proxy Settings
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:11434/
+    ProxyPassReverse / http://localhost:11434/
+    
+    # WebSocket Support
+    RewriteEngine On
+    RewriteCond %{HTTP:Upgrade} =websocket [NC]
+    RewriteRule /(.*)           ws://localhost:11434/$1 [P,L]
+    RewriteCond %{HTTP:Upgrade} !=websocket [NC]
+    RewriteRule /(.*)           http://localhost:11434/$1 [P,L]
+    
+    # Headers
+    RequestHeader set X-Forwarded-Proto "https"
+    RequestHeader set X-Forwarded-Port "443"
+    RequestHeader set X-Real-IP %{REMOTE_ADDR}s
+    
+    # Timeout más largo para procesamiento de LLM
+    ProxyTimeout 300
+    
+    # Aumentar límite de tamaño para modelos grandes
+    LimitRequestBody 10737418240
+    
+    # SSL Configuration (configurado por Certbot)
+    SSLEngine on
+    # SSLCertificateFile /etc/letsencrypt/live/ollama.playhunt.es/fullchain.pem
+    # SSLCertificateKeyFile /etc/letsencrypt/live/ollama.playhunt.es/privkey.pem
+    # Include /etc/letsencrypt/options-ssl-apache.conf
+    
+    ErrorLog ${APACHE_LOG_DIR}/ollama.playhunt.es-ssl-error.log
+    CustomLog ${APACHE_LOG_DIR}/ollama.playhunt.es-ssl-access.log combined
+</VirtualHost>
