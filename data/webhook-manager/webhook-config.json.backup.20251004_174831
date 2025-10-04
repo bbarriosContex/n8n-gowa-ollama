@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "urls": [
+    "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7"
+  ],
+  "secret": "secret",
+  "events": [
+    "message",
+    "group.participants",
+    "message.ack"
+  ],
+  "retryAttempts": 3,
+  "retryDelay": 1000
+}

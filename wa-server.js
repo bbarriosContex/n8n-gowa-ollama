@@ -1,303 +1,206 @@
-const { create } = require('@open-wa/wa-automate');
 const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs-extra');
+const axios = require('axios');
 
 const app = express();
-const PORT = process.env.PORT || 8002;
+const PORT = process.env.PORT || 8003;
+const WA_AUTOMATE_URL = process.env.WA_AUTOMATE_URL || 'http://wa-automate-playhunt:3000';
+const WEBHOOK_MANAGER_URL = process.env.WEBHOOK_MANAGER_URL || 'http://webhook-manager-playhunt:4000';
+const AUTH_USER = process.env.BASIC_AUTH_USER || 'admin';
+const AUTH_PASS = process.env.BASIC_AUTH_PASS || 'playhunt2024';
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-let client = null;
-let qrCode = null;
-let isConnected = false;
-
-// Página principal
-app.get('/', (req, res) => {
-  if (qrCode) {
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>WA-Automate - Playhunt</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            padding: 20px; 
-            background: #f5f5f5;
-          }
-          .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 10px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          }
-          .qr-container { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 10px; 
-            display: inline-block; 
-            margin: 20px 0;
-          }
-          .status { 
-            padding: 10px; 
-            border-radius: 5px; 
-            margin: 10px 0; 
-          }
-          .connecting { background: #fff3cd; color: #856404; }
-          .connected { background: #d4edda; color: #155724; }
-          .error { background: #f8d7da; color: #721c24; }
-          h1 { color: #25d366; margin-bottom: 5px; }
-          .subtitle { color: #666; margin-bottom: 30px; }
-        </style>
-        <script>
-          setTimeout(() => location.reload(), 5000);
-        </script>
-      </head>
-      <body>
-        <div class="container">
-          <h1>🤖 WA-Automate</h1>
-          <p class="subtitle">Playhunt WhatsApp API</p>
-          
-          <div class="status connecting">
-            ⏳ Esperando conexión... Escanea el código QR con WhatsApp
-          </div>
-          
-          <div class="qr-container">
-            <img src="data:image/png;base64,${qrCode}" alt="QR Code" style="max-width: 300px;" />
-          </div>
-          
-          <p><strong>Instrucciones:</strong></p>
-          <ol style="text-align: left; display: inline-block;">
-            <li>Abre WhatsApp en tu teléfono</li>
-            <li>Ve a Configuración → Dispositivos vinculados</li>
-            <li>Toca "Vincular un dispositivo"</li>
-            <li>Escanea este código QR</li>
-          </ol>
-          
-          <p><small>Esta página se actualiza automáticamente cada 5 segundos</small></p>
-        </div>
-      </body>
-      </html>
-    `);
-  } else if (isConnected) {
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>WA-Automate - Playhunt</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            padding: 20px; 
-            background: #f5f5f5;
-          }
-          .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 10px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          }
-          .status { 
-            padding: 15px; 
-            border-radius: 5px; 
-            margin: 20px 0; 
-            background: #d4edda; 
-            color: #155724;
-          }
-          h1 { color: #25d366; margin-bottom: 5px; }
-          .subtitle { color: #666; margin-bottom: 30px; }
-          .api-info { 
-            background: #e9ecef; 
-            padding: 15px; 
-            border-radius: 5px; 
-            margin: 20px 0; 
-            text-align: left;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>✅ WA-Automate</h1>
-          <p class="subtitle">Playhunt WhatsApp API</p>
-          
-          <div class="status">
-            🎉 ¡WhatsApp conectado correctamente!
-          </div>
-          
-          <div class="api-info">
-            <h3>📡 Endpoints disponibles:</h3>
-            <ul>
-              <li><code>GET /status</code> - Estado de la conexión</li>
-              <li><code>POST /sendText</code> - Enviar mensaje de texto</li>
-              <li><code>GET /chats</code> - Obtener lista de chats</li>
-              <li><code>GET /</code> - Esta página</li>
-            </ul>
-            
-            <h3>📝 Ejemplo de uso:</h3>
-            <pre style="background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto;">
-curl -X POST https://wa.playhunt.es/sendText \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "chatId": "34XXXXXXXXX@c.us",
-    "text": "¡Hola desde la API!"
-  }'
-            </pre>
-          </div>
-        </div>
-      </body>
-      </html>
-    `);
-  } else {
-    res.json({ 
-      status: 'initializing', 
-      message: 'WhatsApp se está inicializando...',
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-// API Endpoints
-app.get('/status', (req, res) => {
-  res.json({
-    status: isConnected ? 'connected' : (qrCode ? 'waiting_for_qr' : 'initializing'),
-    connected: isConnected,
-    hasQR: !!qrCode,
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.post('/sendText', async (req, res) => {
-  try {
-    const { chatId, text } = req.body;
+// Middleware de autenticación básica
+const basicAuth = (req, res, next) => {
+    const authHeader = req.headers.authorization;
     
-    if (!client || !isConnected) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'WhatsApp no está conectado' 
-      });
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+        res.set('WWW-Authenticate', 'Basic realm="WhatsApp Server"');
+        return res.status(401).json({ error: 'Authentication required' });
     }
     
-    if (!chatId || !text) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'chatId y text son requeridos' 
-      });
+    const credentials = Buffer.from(authHeader.substring(6), 'base64').toString();
+    const [username, password] = credentials.split(':');
+    
+    if (username !== AUTH_USER || password !== AUTH_PASS) {
+        return res.status(401).json({ error: 'Invalid credentials' });
     }
     
-    const result = await client.sendText(chatId, text);
-    res.json({ success: true, result });
-  } catch (error) {
-    console.error('Error enviando mensaje:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
-  }
-});
-
-app.get('/chats', async (req, res) => {
-  try {
-    if (!client || !isConnected) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'WhatsApp no está conectado' 
-      });
-    }
-    
-    const chats = await client.getAllChats();
-    res.json({ success: true, chats });
-  } catch (error) {
-    console.error('Error obteniendo chats:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
-  }
-});
-
-// Inicializar WhatsApp
-console.log('🚀 Iniciando WA-Automate...');
-console.log('📱 WhatsApp Web se está cargando...');
-
-create({
-  sessionId: 'playhunt-session',
-  headless: false,
-  qrTimeout: 0,
-  authTimeout: 0,
-  restartOnCrash: true,
-  cacheEnabled: false,
-  useChrome: true,
-  chromiumArgs: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-gpu',
-    '--no-first-run',
-    '--disable-extensions',
-    '--disable-default-apps',
-    '--disable-background-timer-throttling',
-    '--disable-backgrounding-occluded-windows',
-    '--disable-renderer-backgrounding'
-  ]
-}).then(c => {
-  client = c;
-  isConnected = true;
-  qrCode = null;
-  
-  console.log('✅ WhatsApp conectado exitosamente!');
-  console.log('🌐 Servidor disponible en: http://localhost:' + PORT);
-  
-  c.onStateChanged(state => {
-    console.log('📱 Estado de WhatsApp:', state);
-    if (state === 'CONNECTED') {
-      isConnected = true;
-      qrCode = null;
-    }
-  });
-  
-}).catch(error => {
-  console.error('❌ Error iniciando WhatsApp:', error);
-});
-
-// Manejar código QR
-const originalCreate = require('@open-wa/wa-automate').create;
-require('@open-wa/wa-automate').create = function(options) {
-  const originalOptions = { ...options };
-  
-  if (!originalOptions.qr) {
-    originalOptions.qr = (base64Qr) => {
-      console.log('📱 Nuevo código QR generado');
-      qrCode = base64Qr;
-      isConnected = false;
-    };
-  }
-  
-  return originalCreate(originalOptions);
+    next();
 };
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Ruta principal para la interfaz de configuración de webhooks (debe ir antes de static)
+app.get('/urls', basicAuth, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'webhook-config.html'));
+});
+
+// Servir archivos estáticos para la interfaz web
+app.use('/urls', express.static(path.join(__dirname, 'public')));
+
+// API Endpoints que se comunican con el webhook-manager
+
+// Obtener configuración
+app.get('/urls/api/config', basicAuth, async (req, res) => {
+    try {
+        const response = await axios.get(`${WEBHOOK_MANAGER_URL}/api/config`, {
+            headers: {
+                'Authorization': req.headers.authorization
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error obteniendo configuración:', error.message);
+        res.status(500).json({ error: 'Error obteniendo configuración' });
+    }
+});
+
+// Guardar configuración
+app.post('/urls/api/config', basicAuth, async (req, res) => {
+    try {
+        const response = await axios.post(`${WEBHOOK_MANAGER_URL}/api/config`, req.body, {
+            headers: {
+                'Authorization': req.headers.authorization,
+                'Content-Type': 'application/json'
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error guardando configuración:', error.message);
+        res.status(500).json({ error: 'Error guardando configuración' });
+    }
+});
+
+// Obtener estadísticas
+app.get('/urls/api/stats', basicAuth, async (req, res) => {
+    try {
+        const response = await axios.get(`${WEBHOOK_MANAGER_URL}/api/stats`, {
+            headers: {
+                'Authorization': req.headers.authorization
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error obteniendo estadísticas:', error.message);
+        res.status(500).json({ error: 'Error obteniendo estadísticas' });
+    }
+});
+
+// Obtener logs
+app.get('/urls/api/logs', basicAuth, async (req, res) => {
+    try {
+        const response = await axios.get(`${WEBHOOK_MANAGER_URL}/api/logs`, {
+            headers: {
+                'Authorization': req.headers.authorization
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error obteniendo logs:', error.message);
+        res.status(500).json({ error: 'Error obteniendo logs' });
+    }
+});
+
+// Limpiar logs
+app.delete('/urls/api/logs', basicAuth, async (req, res) => {
+    try {
+        const response = await axios.delete(`${WEBHOOK_MANAGER_URL}/api/logs`, {
+            headers: {
+                'Authorization': req.headers.authorization
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error limpiando logs:', error.message);
+        res.status(500).json({ error: 'Error limpiando logs' });
+    }
+});
+
+// Enviar webhook de prueba - Implementación interna
+app.post('/urls/api/test', basicAuth, async (req, res) => {
+    try {
+        // Primero obtenemos la configuración actual
+        const configResponse = await axios.get(`${WEBHOOK_MANAGER_URL}/api/config`, {
+            headers: {
+                'Authorization': req.headers.authorization
+            }
+        });
+        
+        if (!configResponse.data) {
+            return res.status(500).json({ error: 'No se pudo obtener la configuración' });
+        }
+        
+        const config = configResponse.data;
+        const testPayload = req.body || {
+            test: true,
+            message: "Webhook de prueba",
+            timestamp: new Date().toISOString(),
+            source: "webhook-configurator"
+        };
+        
+        // Enviar directamente al endpoint de webhook del webhook-manager
+        const webhookResponse = await axios.post(`${WEBHOOK_MANAGER_URL}/webhook`, testPayload, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        res.json({
+            status: 'success',
+            timestamp: new Date().toISOString(),
+            message: 'Webhook de prueba enviado correctamente',
+            config: {
+                urls: config.urls?.length || 0,
+                enabled: config.enabled
+            }
+        });
+    } catch (error) {
+        console.error('Error enviando webhook de prueba:', error.message);
+        res.status(500).json({ 
+            error: 'Error enviando webhook de prueba',
+            details: error.message
+        });
+    }
+});
+
+// Proxy para todas las demás rutas al wa-automate
+app.use('/', createProxyMiddleware({
+    target: WA_AUTOMATE_URL,
+    changeOrigin: true,
+    onProxyRes: function (proxyRes, req, res) {
+        // Añadir headers CORS si es necesario
+        proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+        proxyRes.headers['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,OPTIONS';
+        proxyRes.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Content-Length, X-Requested-With';
+    },
+    onError: function (err, req, res) {
+        console.error('Proxy error:', err);
+        res.status(500).json({ error: 'Proxy error' });
+    }
+}));
+
+// Manejo de errores
+app.use((error, req, res, next) => {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+});
 
 // Iniciar servidor
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Servidor WA-Automate iniciado en puerto ${PORT}`);
-  console.log(`🌐 Accede a: http://localhost:${PORT}`);
-});
-
-// Manejo de errores
-process.on('uncaughtException', (error) => {
-  console.error('❌ Error no capturado:', error);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ Promesa rechazada no manejada:', reason);
+    console.log(`🚀 WhatsApp Server Extension listening on port ${PORT}`);
+    console.log(`📱 WA-Automate URL: ${WA_AUTOMATE_URL}`);
+    console.log(`🔗 Webhook Manager URL: ${WEBHOOK_MANAGER_URL}`);
+    console.log(`🔐 Auth: ${AUTH_USER}:${AUTH_PASS}`);
+    console.log(`🌐 Webhook config available at: http://localhost:${PORT}/urls`);
 });

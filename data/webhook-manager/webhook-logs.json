@@ -1,0 +1,223 @@
+[
+  {
+    "timestamp": "2025-10-04T09:55:51.957Z",
+    "type": "received",
+    "status": "success",
+    "event": "unknown",
+    "source": "whatsapp"
+  },
+  {
+    "timestamp": "2025-10-04T09:55:52.068Z",
+    "type": "forward",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "status": "success",
+    "attempts": 1
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.335Z",
+    "type": "received",
+    "status": "success",
+    "event": "unknown",
+    "source": "whatsapp"
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.341Z",
+    "type": "received",
+    "status": "success",
+    "event": "unknown",
+    "source": "whatsapp"
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.345Z",
+    "type": "received",
+    "status": "success",
+    "event": "unknown",
+    "source": "whatsapp"
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.349Z",
+    "type": "received",
+    "status": "success",
+    "event": "unknown",
+    "source": "whatsapp"
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.354Z",
+    "type": "received",
+    "status": "success",
+    "event": "unknown",
+    "source": "whatsapp"
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.361Z",
+    "type": "received",
+    "status": "success",
+    "event": "unknown",
+    "source": "whatsapp"
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.461Z",
+    "type": "forward",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "status": "success",
+    "attempts": 1
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.483Z",
+    "type": "forward",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "status": "success",
+    "attempts": 1
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.503Z",
+    "type": "forward",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "status": "success",
+    "attempts": 1
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.511Z",
+    "type": "forward",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "status": "success",
+    "attempts": 1
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.600Z",
+    "type": "forward",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "status": "success",
+    "attempts": 1
+  },
+  {
+    "timestamp": "2025-10-04T10:09:54.611Z",
+    "type": "forward",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "status": "success",
+    "attempts": 1
+  },
+  {
+    "timestamp": "2025-10-04T10:09:55.370Z",
+    "type": "received",
+    "status": "success",
+    "event": "unknown",
+    "source": "whatsapp"
+  },
+  {
+    "timestamp": "2025-10-04T10:09:55.449Z",
+    "type": "forward",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "status": "success",
+    "attempts": 1
+  },
+  {
+    "timestamp": "2025-10-04T10:17:10.663Z",
+    "type": "received",
+    "status": "success",
+    "event": "unknown",
+    "source": "whatsapp"
+  },
+  {
+    "timestamp": "2025-10-04T10:17:10.743Z",
+    "type": "forward",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "status": "success",
+    "attempts": 1
+  },
+  {
+    "timestamp": "2025-10-04T10:19:30.953Z",
+    "type": "received",
+    "status": "success",
+    "event": "unknown",
+    "source": "whatsapp"
+  },
+  {
+    "timestamp": "2025-10-04T10:19:30.973Z",
+    "type": "forward",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "status": "success",
+    "attempts": 1
+  },
+  {
+    "timestamp": "2025-10-04T15:16:18.503Z",
+    "type": "received",
+    "status": "success",
+    "event": "message",
+    "source": "whatsapp",
+    "messageType": "unknown"
+  },
+  {
+    "timestamp": "2025-10-04T15:16:18.663Z",
+    "type": "forwarded",
+    "status": "success",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "statusCode": 200,
+    "attempt": 1
+  },
+  {
+    "timestamp": "2025-10-04T15:22:08.253Z",
+    "type": "received",
+    "status": "success",
+    "event": "message",
+    "source": "whatsapp",
+    "messageType": "unknown"
+  },
+  {
+    "timestamp": "2025-10-04T15:22:08.339Z",
+    "type": "forwarded",
+    "status": "success",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "statusCode": 200,
+    "attempt": 1
+  },
+  {
+    "timestamp": "2025-10-04T17:58:03.341Z",
+    "type": "received",
+    "status": "success",
+    "event": "message",
+    "source": "whatsapp",
+    "messageType": "text"
+  },
+  {
+    "timestamp": "2025-10-04T17:58:03.589Z",
+    "type": "forwarded",
+    "status": "success",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "statusCode": 200,
+    "attempt": 1
+  },
+  {
+    "timestamp": "2025-10-04T17:59:41.336Z",
+    "type": "received",
+    "status": "success",
+    "event": "message",
+    "source": "whatsapp",
+    "messageType": "text"
+  },
+  {
+    "timestamp": "2025-10-04T17:59:41.445Z",
+    "type": "forwarded",
+    "status": "success",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "statusCode": 200,
+    "attempt": 1
+  },
+  {
+    "timestamp": "2025-10-04T18:00:04.507Z",
+    "type": "received",
+    "status": "success",
+    "event": "message",
+    "source": "whatsapp",
+    "messageType": "text",
+    "from": "34624230960:96@s.whatsapp.net in 34624230960@s.whatsapp.net"
+  },
+  {
+    "timestamp": "2025-10-04T18:00:04.600Z",
+    "type": "forwarded",
+    "status": "success",
+    "url": "https://n8n.playhunt.es/webhook/8464c758-00d3-437e-8993-c0c1473770b7",
+    "statusCode": 200,
+    "attempt": 1
+  }
+]

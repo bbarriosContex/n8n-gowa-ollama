@@ -1,0 +1,79 @@
+{
+  "syncType": 0,
+  "conversations": [
+    {
+      "ID": "0@s.whatsapp.net",
+      "messages": [
+        {
+          "message": {
+            "key": {
+              "remoteJID": "0@s.whatsapp.net",
+              "fromMe": false,
+              "ID": "1475748823675862-1"
+            },
+            "message": {
+              "videoMessage": {
+                "mimetype": "video/mp4",
+                "fileSHA256": "aRJ8CCm+2jP25GYDXx+j+hfmPwc2nWk652AQVg87fe8=",
+                "fileLength": 3284023,
+                "seconds": 6,
+                "mediaKey": "uzUEWNYhge1OuCcP8QG9S0SKJpcUaRSf9bYF+j+0w9U=",
+                "caption": "*Te damos la bienvenida a WhatsApp Business* 🤩\n\nFelicitaciones por llevar tu empresa al próximo nivel. Ahora puedes acceder a nuestras valiosas herramientas gratuitas, como mensajes automáticos, catálogos y pedidos, que te ayudarán con lo siguiente:\n\n👋 Llegar a más clientes\n\n🏃 Responder más rápido\n\n📈 Aumentar tus ventas\n\nPara empezar y obtener más información, ve a la pestaña Herramientas.",
+                "height": 2314,
+                "width": 2196,
+                "fileEncSHA256": "TllMW6nMnbVy+jh8Q1VDTuNagecDirFZtbdF1/RcLug=",
+                "contextInfo": {
+                  "pairedMediaType": 0
+                },
+                "staticURL": "https://static.whatsapp.net/downloadable?category=PSA\u0026id=1029834798674866689\u0026num=8efdd6d4-1edc-4d97-9bc7-c882b72fd716\u0026_nc_cat=1"
+              },
+              "messageContextInfo": {
+                "messageSecret": "GhFA/PaGTtTqqsoZC/84DBSmzGjEFWtjuh+QRUdkoLk="
+              }
+            },
+            "messageTimestamp": 1759572466,
+            "mediaData": {
+              "localPath": "Media/WhatsApp Business Video/Private/VID-20251004-WA0000.mp4"
+            },
+            "messageSecret": "GhFA/PaGTtTqqsoZC/84DBSmzGjEFWtjuh+QRUdkoLk=",
+            "isMentionedInStatus": false
+          },
+          "msgOrderID": 35
+        },
+        {
+          "message": {
+            "key": {
+              "remoteJID": "0@s.whatsapp.net",
+              "fromMe": true,
+              "ID": "A5C16094140F50F3BFF465DFA94F28B2"
+            },
+            "messageTimestamp": 1759572521,
+            "status": 1,
+            "messageStubType": 155,
+            "isMentionedInStatus": false
+          },
+          "msgOrderID": 34
+        }
+      ],
+      "unreadCount": 1,
+      "readOnly": false,
+      "ephemeralExpiration": 0,
+      "ephemeralSettingTimestamp": 0,
+      "conversationTimestamp": 1759572466,
+      "name": "WhatsApp Business",
+      "notSpam": false,
+      "archived": false,
+      "disappearingMode": {
+        "initiator": 0
+      },
+      "unreadMentionCount": 0,
+      "markedAsUnread": false,
+      "commentsCount": 1000000,
+      "locked": false
+    }
+  ],
+  "globalSettings": {},
+  "threadIDUserSecret": "WYEhMHMxuxjAM642IrFG9K+pwOmlpaCRLEXaInUuewQ=",
+  "threadDsTimeframeOffset": 19597,
+  "companionMetaNonce": "eN64648Dzz1IAyVpVnbpc0oAsXjusEJb"
+}
