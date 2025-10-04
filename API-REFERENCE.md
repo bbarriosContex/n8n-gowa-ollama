@@ -57,6 +57,29 @@ curl -X POST https://n8n.playhunt.es/webhook/test \
 https://wa.playhunt.es
 ```
 
+### 🔗 Gestión de Webhooks
+**Interfaz web**: https://wa.playhunt.es/webhooks/
+**Credenciales**: `admin:playhunt2024`
+
+#### Configurar webhooks via API
+```bash
+# Obtener configuración actual
+curl -u admin:playhunt2024 https://wa.playhunt.es/webhooks/api/config
+
+# Actualizar configuración
+curl -u admin:playhunt2024 -X POST https://wa.playhunt.es/webhooks/api/config \
+  -H "Content-Type: application/json" \
+  -d '{
+    "enabled": true,
+    "urls": ["https://tu-servidor.com/webhook"],
+    "secret": "tu-secreto",
+    "retryAttempts": 3
+  }'
+
+# Enviar webhook de prueba
+curl -u admin:playhunt2024 -X POST https://wa.playhunt.es/webhooks/api/test
+```
+
 ### Ejemplos
 
 #### Verificar estado
@@ -272,19 +295,24 @@ curl -X POST https://ollama.playhunt.es/api/show \
 
 ### Configurar Webhook en WA-Automate
 
-```bash
-# En el contenedor de wa-automate, configurar:
-WEBHOOK_URL=https://n8n.playhunt.es/webhook/whatsapp-bot
-```
+**Método 1: Interfaz Web (Recomendado)**
+1. Ir a: https://wa.playhunt.es/webhooks/
+2. Añadir URL: `https://n8n.playhunt.es/webhook/whatsapp-bot`
+3. Configurar secreto HMAC (opcional)
+4. Habilitar eventos deseados
 
-O vía API:
+**Método 2: Via API**
 ```bash
-curl -X POST https://wa.playhunt.es/setWebhook \
+curl -u admin:playhunt2024 -X POST https://wa.playhunt.es/webhooks/api/config \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://n8n.playhunt.es/webhook/whatsapp-bot"
+    "enabled": true,
+    "urls": ["https://n8n.playhunt.es/webhook/whatsapp-bot"],
+    "secret": "mi-secreto-seguro"
   }'
 ```
+
+**Endpoint webhook configurado automáticamente**: `https://wa.playhunt.es/webhooks/webhook`
 
 ---
 
