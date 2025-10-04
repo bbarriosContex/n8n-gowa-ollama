@@ -40,6 +40,7 @@ services:
       - WHATSAPP_AUTO_MARK_READ=true
       - WHATSAPP_ACCOUNT_VALIDATION=false
       - WHATSAPP_WEBHOOK=http://webhook-manager-playhunt:4000/webhook
+      - WHATSAPP_WEBHOOK_SECRET=secret
     volumes:
       - ./data/wa-automate:/app/storages
     networks:
@@ -48,7 +49,7 @@ services:
       - rest
       - --port=3000
       - --debug=true
-      - --webhook=http://webhook-manager-playhunt:4000/webhook
+      - -w=http://webhook-manager-playhunt:4000/webhook
       - --webhook-secret=secret
       - --os=PlayHunt-Server
       - --basic-auth=admin:playhunt2024
